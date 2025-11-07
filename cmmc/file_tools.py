@@ -1,5 +1,20 @@
 import json
 from pathlib import Path
+from typing import List
+
+
+def discover_files_with_name(name: str, dir: Path) -> List[Path]:
+    """
+    Recursively find all files with the same name (ex. "foo.bar") under the
+    given directory.
+    """
+    if not isinstance(name, str):
+        raise ValueError(f"Expecting string but received {type(name)}: {name}")
+
+    if not isinstance(dir, Path):
+        raise ValueError(f"Expecting Path but received {type(dir)}: {dir}")
+
+    return list(dir.rglob(name))
 
 
 def load_ndjson(file_path: str | Path, encoding: str = "utf-8"):
