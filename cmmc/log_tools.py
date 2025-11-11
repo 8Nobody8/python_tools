@@ -1,4 +1,5 @@
 from copy import deepcopy
+import inspect
 from time import localtime, strftime
 from typing import Any, Optional
 
@@ -14,18 +15,20 @@ def terminal_print():
     def p(
         msg: str,
         label: Optional[Any] = None,
+        use_label: Optional[bool] = True,
         use_timestamp: Optional[bool] = True,
         int_leading_zeros: Optional[int] = 2,
         float_leading_space: Optional[int] = 2,
         float_decimals: Optional[int] = 2,
         str_leading_space: Optional[int] = 0,
-        end: str = "\n",
+        end: Optional[str] = "\n",
     ):
         
         nonlocal current_label
         nonlocal previous_label
 
-        use_label = False if label is None else True
+        if use_label and label is None:
+            label = inspect.currentframe().f_back.f_code.co_name
 
         current_label = label
 
