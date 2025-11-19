@@ -1,5 +1,6 @@
 from copy import deepcopy
 import inspect
+from pathlib import Path
 from time import localtime, strftime
 from typing import Any, Optional
 
@@ -28,7 +29,20 @@ def terminal_print():
         nonlocal previous_label
 
         if use_label and label is None:
-            label = inspect.currentframe().f_back.f_code.co_name
+            frame = inspect.currentframe().f_back
+            code = frame.f_code
+
+            module = inspect.getmodule(code)
+            if module is not None and getattr(module, "__file__", None):
+                file_name = Path(module.__file__).stem
+            elif module is not None:
+                file_name = module.__name__
+            else:
+                file_name = "<unknown>"
+
+            qualname = code.co_qualname
+
+            label = f"{file_name}.{qualname}()"
 
         current_label = label
 
