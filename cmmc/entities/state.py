@@ -21,8 +21,10 @@ Can be reused in any project that needs a flexible, introspectable state contain
 
 """
 
+from collections.abc import MutableMapping
 
-class State:
+
+class State(MutableMapping):
     """
     A hybrid object-dict state container.
 
@@ -31,7 +33,7 @@ class State:
     """
 
     def __init__(self, initial=None):
-        self._data = dict(initial) if initial else {}
+        object.__setattr__(self, "_data", dict(initial) if initial else {})
 
     def __contains__(self, key):
         return key in self._data
@@ -55,12 +57,18 @@ class State:
     def __getitem__(self, key):
         return self._data[key]
 
+    def __iter__(self):
+        return iter(self._data)
+
+    def __len__(self):
+        return len(self._data)
+
     def __repr__(self):
-        return f"State({self._data})"
+        return f"State({self._data!r})"
 
     def __setattr__(self, key, value):
-        if key == "_data":
-            super().__setattr__(key, value)
+        if key.startswith("_"):
+            object.__setattr__(self, key, value)
         else:
             self._data[key] = value
 
